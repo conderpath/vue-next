@@ -18,7 +18,7 @@ import {
   ComponentPropsOptions,
   ExtractDefaultPropTypes
 } from './componentProps'
-import { EmitsOptions } from './componentEmits'
+import { EmitsOptions, EmitsToProps } from './componentEmits'
 import { isFunction } from '@vue/shared'
 import { VNodeProps } from './vnode'
 import {
@@ -38,10 +38,15 @@ export type DefineComponent<
   M extends MethodOptions = MethodOptions,
   Mixin extends ComponentOptionsMixin = ComponentOptionsMixin,
   Extends extends ComponentOptionsMixin = ComponentOptionsMixin,
-  E extends EmitsOptions = Record<string, any>,
+  E extends EmitsOptions = {},
   EE extends string = string,
   PP = PublicProps,
-  Props = Readonly<ExtractPropTypes<PropsOrPropOptions>>,
+  Props = Readonly<
+    PropsOrPropOptions extends ComponentPropsOptions
+      ? ExtractPropTypes<PropsOrPropOptions>
+      : PropsOrPropOptions
+  > &
+    ({} extends E ? {} : EmitsToProps<E>),
   Defaults = ExtractDefaultPropTypes<PropsOrPropOptions>
 > = ComponentPublicInstanceConstructor<
   CreateComponentPublicInstance<
@@ -98,7 +103,7 @@ export function defineComponent<
   M extends MethodOptions = {},
   Mixin extends ComponentOptionsMixin = ComponentOptionsMixin,
   Extends extends ComponentOptionsMixin = ComponentOptionsMixin,
-  E extends EmitsOptions = EmitsOptions,
+  E extends EmitsOptions = {},
   EE extends string = string
 >(
   options: ComponentOptionsWithoutProps<
@@ -125,7 +130,7 @@ export function defineComponent<
   M extends MethodOptions = {},
   Mixin extends ComponentOptionsMixin = ComponentOptionsMixin,
   Extends extends ComponentOptionsMixin = ComponentOptionsMixin,
-  E extends EmitsOptions = Record<string, any>,
+  E extends EmitsOptions = {},
   EE extends string = string
 >(
   options: ComponentOptionsWithArrayProps<
@@ -163,7 +168,7 @@ export function defineComponent<
   M extends MethodOptions = {},
   Mixin extends ComponentOptionsMixin = ComponentOptionsMixin,
   Extends extends ComponentOptionsMixin = ComponentOptionsMixin,
-  E extends EmitsOptions = Record<string, any>,
+  E extends EmitsOptions = {},
   EE extends string = string
 >(
   options: ComponentOptionsWithObjectProps<
